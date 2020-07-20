@@ -34,9 +34,7 @@ public:
 
 	std::vector<std::vector<float>> generate();
 
-	void generateTerrain(std::shared_ptr<ChunkHeight> heights);
-
-	void render(Camera camera, Matrix4f projectionMatrix);
+	void generateTerrain();
 
 	void addVertex(Vec3f pos, std::vector<float>* vec, float x, float y, float z);
 
@@ -49,8 +47,6 @@ public:
 	int scan(int x, int y, int z, int axis, int axisA, int axisB, float &density, int &material);
 		
 	void destroy();
-
-	void refresh();
 
 	void sphere(float xP, float yP, float zP, float radius, float power);
 
