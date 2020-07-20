@@ -250,21 +250,7 @@ int Chunk::scan(int x, int y, int z, int axis, int axisA, int axisB, float &dens
 
 void Chunk::destroy()
 {
-	//sendDeleteNotification();
-}
-void Chunk::refresh()
-{
-	if (loaded && chunkInfo.size() != 0)
-	{
-		mesh.destroy();
-		//std::cout << chunkInfo.size() << "\n";
-		mesh = Model::load3DModel(chunkInfo.at(0), chunkInfo.at(1), chunkInfo.at(2), chunkInfo.at(3), chunkInfo.at(4), allMaterials);
-		ready = true;
-		loaded = false;
-		chunkInfo = std::vector<std::vector<float>>();
-		allMaterials = std::vector<unsigned int>();
-	}
-	
+	sendDeleteNotification();
 }
 void Chunk::sphere(float xP, float yP, float zP, float radius, float power)
 {
@@ -309,7 +295,7 @@ void Chunk::receiveDeleteNotification(int x, int y, int z)
 	int cY = y - this->y;
 	int cZ = z - this->z;
 
-	/////////neighbours[cX + 1][cY + 1][cZ + 1] = nullptr;
+	neighbours[cX + 1][cY + 1][cZ + 1] = nullptr;
 }
 void Chunk::sendDeleteNotification()
 {
@@ -745,99 +731,17 @@ std::vector<std::vector<float>> Chunk::generate()
 	
 	return data;
 }
-float lx = 0;
-float lz = 0;
-void Chunk::generateTerrain(std::shared_ptr<ChunkHeight> heights)
+void Chunk::generateTerrain()
 {
 	bool air = false;
 	bool solid = false;
-	for (int x = 0; x < BASE_SIZE; x++)
-	{
-		for (int z = 0; z < BASE_SIZE; z++)
-		{
-			float density = 0;
-			float height = (int) heights->getHeight(x, z);
-			if (height < -1)
-			{
-				height = -1;
-			}
-			for (int y = 0; y < BASE_SIZE; y++)
-			{
-				this->density[x + BASE_SIZE * (y + BASE_SIZE * z)] = 0;
-
-				if (y + this->y * CHUNK_SIZE < height)
-				{
-					this->density[x + BASE_SIZE * (y + BASE_SIZE * z)] = 11;
-					
-					if (y + this->y * CHUNK_SIZE < 7)
-					{
-						this->density[x + BASE_SIZE * (y + BASE_SIZE * z)] = 6;
-					}
-					if (y + this->y * CHUNK_SIZE < -10)
-					{
-						this->density[x + BASE_SIZE * (y + BASE_SIZE * z)] = 8;
-					}
-					if (y + this->y * CHUNK_SIZE < 0)
-					{
-						this->density[x + BASE_SIZE * (y + BASE_SIZE * z)] = 4;
-					}
-					
-					else if (y + this->y * CHUNK_SIZE > 170)
-					{
-						this->density[x + BASE_SIZE * (y + BASE_SIZE * z)] = 12;
-					}
-					if (y + this->y * CHUNK_SIZE <= -1)
-					{
-						this->density[x + BASE_SIZE * (y + BASE_SIZE * z)] = 13;
-					}
-				}
-				if (y + this->y * CHUNK_SIZE < height - 1)
-				{
-					this->density[x + BASE_SIZE * (y + BASE_SIZE * z)] = 3;
-				}
-				float zz = z + this->z * CHUNK_SIZE;
-				if (zz < -250)
-				{
-					zz = -250;
-				}
-				if (zz > 250)
-				{
-					zz = 250;
-				}
-				if (M::distance(Vec3f(x + this->x * CHUNK_SIZE, y + this->y * CHUNK_SIZE, z + this->z * CHUNK_SIZE), Vec3f(70, zz, zz)) < 9)
-				{
-					this->density[x + BASE_SIZE * (y + BASE_SIZE * z)] = 5;
-				}
-				if (M::distance(Vec3f(x + this->x * CHUNK_SIZE, y + this->y * CHUNK_SIZE, z + this->z * CHUNK_SIZE), Vec3f(60, (z + this->z * CHUNK_SIZE) / 3, z + this->z * CHUNK_SIZE)) < 7)
-				{
-					this->density[x + BASE_SIZE * (y + BASE_SIZE * z)] = 0;
-				}
-
-				if (this->density[x + BASE_SIZE * (y + BASE_SIZE * z)] < 1)
-				{
-					air = true;
-				}
-				else if (this->density[x + BASE_SIZE * (y + size * z)])
-				{
-					solid = true;
-				}
-			}
-		
-		}
-	}
+	
+	/*
+		Include your voxel data generation
+	*/
+	
 	if (solid != air)
 	{
 		emptyChunk = true;
 	}
-}
-void Chunk::render(Camera camera, Matrix4f projectionMatrix)
-{
-	glBindVertexArray(mesh.getVAO());
-	glEnableVertexArrayAttrib(mesh.getVAO(), 0);
-	glEnableVertexArrayAttrib(mesh.getVAO(), 1);
-	glEnableVertexArrayAttrib(mesh.getVAO(), 2);
-	glEnableVertexArrayAttrib(mesh.getVAO(), 3);
-	glEnableVertexArrayAttrib(mesh.getVAO(), 4);
-	glEnableVertexArrayAttrib(mesh.getVAO(), 5);
-	glDrawArrays(GL_TRIANGLES, 0, mesh.getCount());
 }
